@@ -7,6 +7,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,6 +21,8 @@ import com.google.android.material.snackbar.Snackbar;
 public class MainActivity extends AppCompatActivity {
 
     private Button button_notify;
+    private Button button_cancel;
+    private Button button_update;
     private NotificationManager mNotificationManager;
 
     private static final String PRIMARY_CHANNEL_ID = "primary_channel";
@@ -38,11 +42,44 @@ public class MainActivity extends AppCompatActivity {
         });
         createNotificationChannel();
 
+        button_update = findViewById(R.id.update);
+        button_update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Update the Notification
+                updateNotification();
+            }
+        });
+
+        button_cancel = findViewById(R.id.cancel);
+        button_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // cancel the Notification
+                cancelNotification();
+            }
+        });
+
     }
 
     public void sendNotification() {
         NotificationCompat.Builder notifyBuilder = getNotificationBuilder();
         mNotificationManager.notify(NOTIFICATION_ID, notifyBuilder.build());
+    }
+
+    public void updateNotification() {
+        // convert your drawable into a bitmap
+        Bitmap androidImage = BitmapFactory
+                .decodeResource(getResources(), R.drawable.mascot_1);
+        NotificationCompat.Builder notifyBuilder = getNotificationBuilder();
+        notifyBuilder.setStyle(new NotificationCompat.BigPictureStyle()
+        .bigPicture(androidImage)
+        .setBigContentTitle("Notification updated!"));
+        mNotificationManager.notify(NOTIFICATION_ID, notifyBuilder.build());
+    }
+
+    public void cancelNotification() {
+        mNotificationManager.cancel(NOTIFICATION_ID);
     }
 
     public void createNotificationChannel() {
@@ -58,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
             mNotificationManager.createNotificationChannel(notificationChannel);
         }
 
-}
+    }
 
     public NotificationCompat.Builder getNotificationBuilder() {
 
