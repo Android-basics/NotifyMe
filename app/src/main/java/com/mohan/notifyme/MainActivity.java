@@ -5,6 +5,8 @@ import androidx.core.app.NotificationCompat;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -56,13 +58,20 @@ public class MainActivity extends AppCompatActivity {
             mNotificationManager.createNotificationChannel(notificationChannel);
         }
 
-    }
+}
 
     public NotificationCompat.Builder getNotificationBuilder() {
+
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent notificationPendingIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(this, PRIMARY_CHANNEL_ID)
                 .setContentTitle("You've been notified")
                 .setContentText("This is your notification text")
-                .setSmallIcon(R.drawable.ic_android);
+                .setSmallIcon(R.drawable.ic_android)
+                .setContentIntent(notificationPendingIntent)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setDefaults(NotificationCompat.DEFAULT_ALL);
         return notifyBuilder;
     }
 }
