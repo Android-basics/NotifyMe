@@ -6,7 +6,10 @@ import androidx.core.app.NotificationCompat;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -27,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String PRIMARY_CHANNEL_ID = "primary_channel";
     private static final int NOTIFICATION_ID = 0;
+
+    private static final String ACTION_UPDATE_NOTIFICATION = "com.mohan.notifyme.ACTION_UPDATE_NOTIFICATION";
+    private NotificationReceiver mReceiver = new NotificationReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         });
         setNotificationButtonState(true, false, false);
 
+        registerReceiver(mReceiver, new IntentFilter(ACTION_UPDATE_NOTIFICATION));
     }
 
     public void sendNotification() {
@@ -117,8 +124,6 @@ public class MainActivity extends AppCompatActivity {
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setDefaults(NotificationCompat.DEFAULT_ALL);
         return notifyBuilder;
-
-
     }
 
     void setNotificationButtonState(Boolean isNotifyEnabled,
@@ -127,5 +132,24 @@ public class MainActivity extends AppCompatActivity {
         button_notify.setEnabled(isNotifyEnabled);
         button_update.setEnabled(isUpdateEnabled);
         button_cancel.setEnabled(isCancelEnabled);
+    }
+
+    public class  NotificationReceiver extends BroadcastReceiver {
+
+        public NotificationReceiver() {
+
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent){
+            // Update the Notification
+            updateNotification();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(mReceiver);
+        super.onDestroy();
     }
 }
